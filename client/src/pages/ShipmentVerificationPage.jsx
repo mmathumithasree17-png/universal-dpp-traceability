@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api } from '../api/client';
+import { resolveReachableUrl } from '../utils/urlHelper';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import AlertBanner from '../components/common/AlertBanner';
 import QrScannerModal from '../components/dpp/QrScannerModal';
@@ -46,7 +47,8 @@ export default function ShipmentVerificationPage() {
 
   useEffect(() => {
     if (data) {
-      const targetUrl = data.qrPayload || window.location.href;
+      const rawUrl = data.qrPayload || `/shipment-verify/${data.shipment?.shipmentId || id || 'latest'}`;
+      const targetUrl = resolveReachableUrl(rawUrl, `/shipment-verify/${data.shipment?.shipmentId || id || 'latest'}`);
       QRCode.toDataURL(targetUrl, {
         width: 320,
         margin: 2,
@@ -63,7 +65,7 @@ export default function ShipmentVerificationPage() {
         });
       }
     }
-  }, [data]);
+  }, [data, id]);
 
   // New check state
   const [showAddCheck, setShowAddCheck] = useState(false);

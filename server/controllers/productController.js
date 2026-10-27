@@ -192,7 +192,7 @@ async function getProductByPassportId(req, res) {
     const port = process.env.PORT || 5001;
     const reqHost = req.headers['x-forwarded-host'] || req.get('host');
     const reqProto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
-    const isPublicHost = reqHost && !reqHost.includes('localhost') && !reqHost.includes('127.0.0.1');
+    const isPublicHost = reqHost && !reqHost.includes('localhost') && !reqHost.includes('127.0.0.1') && !reqHost.startsWith('10.') && !reqHost.startsWith('192.') && !reqHost.startsWith('172.');
     const baseUrl = process.env.PUBLIC_URL || (isPublicHost ? `${reqProto}://${reqHost}` : `http://${lanIp}:${port}`);
     const passportUrl = `${baseUrl}/dpp?id=${product.passportId}`;
     const qrPayload = passportUrl;

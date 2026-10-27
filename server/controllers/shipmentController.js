@@ -29,6 +29,19 @@ function getLanIp() {
   return '10.1.0.173';
 }
 
+function getBaseUrl(req) {
+  if (process.env.PUBLIC_URL) return process.env.PUBLIC_URL.replace(/\/+$/, '');
+  const host = (req && req.headers && (req.headers['x-forwarded-host'] || req.get('host'))) || '';
+  const proto = (req && req.headers && (req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http'))) || 'http';
+  
+  if (host && !host.includes('localhost') && !host.includes('127.0.0.1') && !host.startsWith('10.') && !host.startsWith('192.') && !host.startsWith('172.')) {
+    return `${proto}://${host}`;
+  }
+  const lanIp = getLanIp();
+  const port = process.env.PORT || 5001;
+  return `http://${lanIp}:${port}`;
+}
+
 const DEFAULT_CHECKLIST_ITEMS = [
   {
     id: 'chk-raw-1',
@@ -220,9 +233,7 @@ async function createShipment(req, res) {
     }
 
     // QR payload linking directly to the mobile-reachable verification page
-    const lanIp = getLanIp();
-    const port = process.env.PORT || 5001;
-    const baseUrl = process.env.PUBLIC_URL || `http://${lanIp}:${port}`;
+    const baseUrl = getBaseUrl(req);
     const qrPayload = `${baseUrl}/shipment-verify/${shipmentId}`;
 
     const newShipment = await Shipment.create({
@@ -425,9 +436,7 @@ async function getShipmentTraceability(req, res) {
       events = [];
     }
 
-    const lanIp = getLanIp();
-    const port = process.env.PORT || 5001;
-    const baseUrl = process.env.PUBLIC_URL || `http://${lanIp}:${port}`;
+    const baseUrl = getBaseUrl(req);
 
     return res.status(200).json({
       success: true,
@@ -441,7 +450,7 @@ async function getShipmentTraceability(req, res) {
         materialBatches: fullBatches,
         events,
         checklist: shipment.checklist || DEFAULT_CHECKLIST_ITEMS,
-        qrPayload: shipment.qrPayload || `${baseUrl}/shipment-verify/${shipment.shipmentId}`
+        qrPayload: `${baseUrl}/shipment-verify/${shipment.shipmentId}`
       }
     });
   } catch (err) {

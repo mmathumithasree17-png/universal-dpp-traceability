@@ -12,7 +12,8 @@ import {
   AlertCircle,
   FileCode,
   RefreshCw,
-  Share2
+  Share2,
+  Network
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api } from '../../api/client';
@@ -36,16 +37,17 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
         setLoading(true);
         setError(null);
         const res = await api.getNetworkInfo();
-        if (res.success) {
-          setNetworkInfo(res);
-          if (res.publicUrl) {
-            setCustomPublicUrl(res.publicUrl);
-            setSelectedMode('public');
-          } else if (res.lanUrl) {
-            setSelectedMode('lan');
-          } else {
-            setSelectedMode('local');
-          }
+        const isPublicHost = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        if (isPublicHost) {
+          setSelectedMode('public');
+          setCustomPublicUrl(window.location.origin);
+        } else if (res.success && res.publicUrl) {
+          setCustomPublicUrl(res.publicUrl);
+          setSelectedMode('public');
+        } else if (res.success && res.lanUrl) {
+          setSelectedMode('lan');
+        } else {
+          setSelectedMode('local');
         }
       } catch (err) {
         console.warn('Network info fetch fallback:', err);
@@ -67,6 +69,7 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
 
   // Determine current active URL to encode into QR based on mode and page
   const getPagePath = () => {
+    if (selectedPage === 'traceability') return '/traceability';
     if (selectedPage === 'shipment') return '/shipment-verify/latest';
     if (selectedPage === 'dpp') return '/dpp';
     return '/dashboard';
@@ -74,9 +77,13 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
 
   const currentTargetUrl = (() => {
     const path = getPagePath();
+    const isPublicHost = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    if (isPublicHost) {
+      return `${window.location.origin}${path}`;
+    }
     const port = networkInfo?.port || window.location.port || '5001';
     if (selectedMode === 'public') {
-      const base = customPublicUrl.trim() || 'https://universal-dpp.example.com';
+      const base = customPublicUrl.trim() || window.location.origin;
       return base.replace(/\/+$/, '') + path;
     }
     if (selectedMode === 'local') {
@@ -184,7 +191,25 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
             <label className="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-wider block">
               1. Choose Destination Page
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedPage('traceability')}
+                className={`p-3 rounded-2xl border text-left transition-all ${
+                  selectedPage === 'traceability'
+                    ? 'border-emerald-500 bg-emerald-50/70 text-emerald-950 shadow-xs ring-1 ring-emerald-500'
+                    : 'border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-1.5 font-bold text-xs">
+                  <Network className="w-3.5 h-3.5 text-cyan-600" />
+                  <span>Product Traceability</span>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1 font-mono">
+                  /traceability
+                </div>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setSelectedPage('shipment')}
@@ -196,7 +221,7 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
               >
                 <div className="flex items-center space-x-1.5 font-bold text-xs">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Consignment & Live Checks</span>
+                  <span>Shipment & Checks</span>
                 </div>
                 <div className="text-[10px] text-slate-500 mt-1 font-mono">
                   /shipment-verify/latest

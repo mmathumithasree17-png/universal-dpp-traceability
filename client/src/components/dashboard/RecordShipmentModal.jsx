@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { api } from '../../api/client';
+import { resolveReachableUrl } from '../../utils/urlHelper';
 
 const INITIAL_CHECKLIST_STAGES = [
   {
@@ -117,7 +118,7 @@ export default function RecordShipmentModal({ isOpen, onClose, onSuccess }) {
 
   useEffect(() => {
     if (createdShipment) {
-      const url = createdShipment.qrPayload || `${window.location.origin}/shipment-verify/${createdShipment.shipmentId}`;
+      const url = resolveReachableUrl(createdShipment.qrPayload, `/shipment-verify/${createdShipment.shipmentId}`);
       
       // Generate Data URL for permanent <img> display & download
       QRCode.toDataURL(url, {

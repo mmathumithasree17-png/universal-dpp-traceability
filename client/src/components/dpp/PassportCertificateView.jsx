@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   QrCode,
   Zap,
@@ -18,10 +19,12 @@ import {
   ChevronRight,
   Wrench,
   MapPin,
+  Network,
 } from 'lucide-react';
 import Badge from '../common/Badge';
 import QrCodeDisplay from './QrCodeDisplay';
 import PassportTimeline from './PassportTimeline';
+import { resolveReachableUrl } from '../../utils/urlHelper';
 
 export default function PassportCertificateView({ passportData, onSelectRelated }) {
   if (!passportData) return null;
@@ -44,18 +47,8 @@ export default function PassportCertificateView({ passportData, onSelectRelated 
   };
 
   const isQuarantined = product.status === 'QUARANTINED';
-  // Ensure QR code always encodes a reachable URL for phones on the network
-  const qrValue = (() => {
-    if (product.passportUrl && !product.passportUrl.includes('dpp.aerodrive.com')) {
-      return product.passportUrl;
-    }
-    const lanIp = '10.1.0.173';
-    const port = window.location.port || '5001';
-    const host = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? `${lanIp}:${port}`
-      : window.location.host;
-    return `${window.location.protocol}//${host}/dpp?id=${product.passportId}`;
-  })();
+  // Ensure QR code always encodes a reachable URL for phones on any network or public internet
+  const qrValue = resolveReachableUrl(product.passportUrl, `/dpp?id=${product.passportId}`);
 
   return (
     <div className="space-y-6 printable-passport">
@@ -102,18 +95,27 @@ export default function PassportCertificateView({ passportData, onSelectRelated 
           </div>
 
           {/* QR Code and Actions */}
-          <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-4 shrink-0">
+          <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-2.5 shrink-0">
             <QrCodeDisplay
               value={qrValue}
               passportId={product.passportId}
               modelName={product.modelName}
             />
 
+            <Link
+              to={`/traceability?id=${product.passportId}&dir=backward`}
+              className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs font-bold transition-all shadow-sm"
+              title="Inspect complete backward manufacturing genealogy and raw material provenance"
+            >
+              <Network className="w-4 h-4" />
+              <span>Trace Product Lineage</span>
+            </Link>
+
             <button
               onClick={handlePrint}
-              className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-navy-950 font-mono text-xs font-bold transition-all shadow-panel"
+              className="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-xs font-semibold transition-all"
             >
-              <Printer className="w-4 h-4" />
+              <Printer className="w-4 h-4 text-slate-500" />
               <span>Print / Export PDF</span>
             </button>
           </div>
