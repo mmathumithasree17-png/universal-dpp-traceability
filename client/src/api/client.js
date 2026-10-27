@@ -128,4 +128,10 @@ export const api = {
   // MVTec Anomaly Detection
   getMvtecSamples: () => request('/mvtec/samples'),
   runMvtecInspection: (payload) => request('/mvtec/inspect', { method: 'POST', body: JSON.stringify(payload) }),
+
+  // AI GPS Telematics & Deviation Monitoring
+  getTrackingUpdates: () => request('/tracking/updates'),
+  getRouteWaypoints: (id) => request(`/tracking/route/${id}`),
+  simulateGpsDeviation: (payload = {}) => request('/tracking/simulate-deviation', { method: 'POST', body: JSON.stringify(payload) }),
+  acknowledgeTrackingAlert: (payload) => request('/tracking/acknowledge-alert', { method: 'POST', body: JSON.stringify(payload) }),
 };

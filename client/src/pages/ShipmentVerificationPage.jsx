@@ -32,6 +32,7 @@ import { resolveReachableUrl } from '../utils/urlHelper';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import AlertBanner from '../components/common/AlertBanner';
 import QrScannerModal from '../components/dpp/QrScannerModal';
+import AiGpsTrackingPanel from '../components/dashboard/AiGpsTrackingPanel';
 
 export default function ShipmentVerificationPage() {
   const { id } = useParams();
@@ -270,6 +271,9 @@ export default function ShipmentVerificationPage() {
           </div>
         </div>
       </div>
+
+      {/* AI GPS Telematics & Geofence Corridor Sentinel */}
+      <AiGpsTrackingPanel shipmentId={shipment.shipmentId} />
 
       {/* Main Grid: Checklist & Products */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

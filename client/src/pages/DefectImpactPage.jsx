@@ -29,6 +29,8 @@ import { api } from '../api/client';
 import Badge from '../components/common/Badge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import AlertBanner from '../components/common/AlertBanner';
+import MvtecVisionPanel from '../components/defects/MvtecVisionPanel';
+import AiGpsTrackingPanel from '../components/dashboard/AiGpsTrackingPanel';
 
 const DEFECT_CATEGORIES = [
   { value: 'METALLURGICAL_FLAW', label: 'Metallurgical Inclusion / Sub-surface Flaw' },
@@ -531,6 +533,23 @@ export default function DefectImpactPage() {
           </div>
         </div>
       ) : null}
+
+      {/* AI Computer Vision Defect Detection Engine */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-mono font-bold uppercase tracking-wider text-slate-700">
+            Automated Vision Inspection Sentinel
+          </h2>
+          <span className="text-xs font-mono text-cyan-700 font-semibold">Sub-surface anomaly scanning active</span>
+        </div>
+        <MvtecVisionPanel onInspectionComplete={() => {
+          if (onDataRefreshed) onDataRefreshed();
+          loadDefectsList();
+        }} />
+      </div>
+
+      {/* AI GPS Telematics & Deviation Notification Sentinel */}
+      <AiGpsTrackingPanel />
 
       {/* Historical Defect & Containment Ledger */}
       <div className="industrial-card p-6 rounded-3xl border border-slate-200 bg-white shadow-xs space-y-4">

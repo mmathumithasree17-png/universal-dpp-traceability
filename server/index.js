@@ -22,6 +22,7 @@ const auditRoutes = require('./routes/auditRoutes');
 const genealogyRoutes = require('./routes/genealogyRoutes');
 const assemblyRoutes = require('./routes/assemblyRoutes');
 const mvtecRoutes = require('./routes/mvtecRoutes');
+const trackingRoutes = require('./routes/trackingRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -45,6 +46,7 @@ app.use('/api/defects', defectRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/genealogy', genealogyRoutes);
 app.use('/api/mvtec', mvtecRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // Fallback 404 Route for /api
 app.use('/api', (req, res) => {
