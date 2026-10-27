@@ -1,11 +1,11 @@
 services:
   - type: web
     name: universal-dpp-traceability
-    env: node
+    runtime: node
     plan: free
     region: oregon
-    buildCommand: npm run build
-    startCommand: npm start
+    buildCommand: cd client && npm install && npm run build && cd ../server && npm install
+    startCommand: cd server && node index.js
     envVars:
       - key: NODE_ENV
         value: production

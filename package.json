@@ -4,8 +4,8 @@
   "description": "AI-Powered Universal Digital Product Passport for Smart Product Traceability (PS10)",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install",
+    "start": "cd server && node index.js",
+    "build": "cd client && npm install && npm run build && cd ../server && npm install",
     "dev": "node startAll.js",
     "setup": "npm --prefix server install && npm --prefix client install",
     "install:all": "npm --prefix server install && npm --prefix client install",
