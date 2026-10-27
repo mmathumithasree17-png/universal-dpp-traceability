@@ -9,3 +9,5 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://mmathumithasree17_db_user:73I39joQtTG94JFC@cluster0.di2rczb.mongodb.net/dpp_traceability?retryWrites=true&w=majority
