@@ -1,0 +1,144 @@
+{
+  "materialBatches": [
+    {
+      "batchId": "MB-RAW-001",
+      "materialName": "High Purity Copper Rod 8mm",
+      "category": "Conductor",
+      "supplierName": "Global Copper Ltd",
+      "supplierLotNumber": "GCL-8890",
+      "quantity": 1000,
+      "unit": "kg",
+      "receivedDate": "2026-10-01T08:00:00.000Z",
+      "purityOrGrade": "99.99% Cu",
+      "certificateOfAnalysis": "COA-GCL-001",
+      "carbonFootprintKgCO2e": 120.5,
+      "status": "ACTIVE",
+      "qualityPassed": true,
+      "notes": "Raw material for motor stator windings"
+    }
+  ],
+  "components": [
+    {
+      "componentId": "CMP-STATOR-001",
+      "componentName": "Precision Stator Core Assembly",
+      "componentType": "STATOR_CORE",
+      "materialBatches": [
+        {
+          "batchId": "MB-RAW-001",
+          "quantityUsed": 45,
+          "unit": "kg"
+        }
+      ],
+      "productionDate": "2026-10-05T10:00:00.000Z",
+      "lineId": "STATOR-LINE-01",
+      "operatorId": "Tech-102",
+      "qualityCheckPassed": true,
+      "status": "APPROVED",
+      "serialNumber": "SN-STAT-001",
+      "notes": "Hairpin winding complete and tested"
+    }
+  ],
+  "assemblies": [
+    {
+      "assemblyId": "ASM-POWERTRAIN-001",
+      "assemblyName": "Electric Motor Powertrain Subassembly",
+      "assemblyType": "POWERTRAIN",
+      "componentsUsed": [
+        {
+          "componentId": "CMP-STATOR-001",
+          "componentName": "Precision Stator Core Assembly",
+          "componentType": "STATOR_CORE"
+        }
+      ],
+      "materialBatchesUsed": [
+        {
+          "batchId": "MB-RAW-001",
+          "materialName": "High Purity Copper Rod 8mm"
+        }
+      ],
+      "assemblyLine": "MAIN-LINE-01",
+      "workstation": "WS-FINAL",
+      "assembledAt": "2026-10-10T14:30:00.000Z",
+      "operator": "Assembly Lead",
+      "qualityChecks": {
+        "passedAll": true
+      },
+      "status": "ASSEMBLED",
+      "notes": "Full subassembly integration passed"
+    }
+  ],
+  "products": [
+    {
+      "passportId": "DPP-EV-001",
+      "serialNumber": "SN-EV-MOTOR-001",
+      "modelName": "AeroDrive Hyper-350 Electric Motor",
+      "productCategory": "EV Powertrain / High-Performance Traction Motor",
+      "assemblyId": "ASM-POWERTRAIN-001",
+      "facilityLocation": "Plant 1 - Detroit Cleanroom",
+      "manufacturedDate": "2026-10-12T09:00:00.000Z",
+      "specifications": {
+        "ratedPowerKw": 350,
+        "maxRpm": 20000,
+        "peakTorqueNm": 520,
+        "efficiencyRating": "IE5 Ultra-Premium",
+        "nominalVoltageV": 800,
+        "coolingMethod": "Direct Stator Oil-Cooled",
+        "totalWeightKg": 48.5
+      },
+      "sustainability": {
+        "totalCarbonFootprintKgCO2e": 165.2,
+        "recycledMaterialPercentage": 35.0,
+        "recyclabilityRatePercentage": 97.0,
+        "euBatteryDppCompliant": true,
+        "circularityIndex": 0.89,
+        "repairabilityScore": "Class A (Modular Disassembly)"
+      },
+      "componentsUsed": [
+        {
+          "componentId": "CMP-STATOR-001",
+          "componentName": "Precision Stator Core Assembly",
+          "componentType": "STATOR_CORE",
+          "serialNumber": "SN-STAT-001"
+        }
+      ],
+      "materialBatchesUsed": [
+        {
+          "batchId": "MB-RAW-001",
+          "materialName": "High Purity Copper Rod 8mm",
+          "category": "Conductor",
+          "supplierName": "Global Copper Ltd"
+        }
+      ],
+      "complianceCertificates": ["ISO 9001", "EU ESPR 2024/1781", "RoHS"],
+      "status": "QC_APPROVED",
+      "qrPayload": "dpp://aerodrive/product/DPP-EV-001"
+    }
+  ],
+  "shipments": [
+    {
+      "shipmentId": "SHP-2026-001",
+      "trackingNumber": "TRK-DHL-001",
+      "carrier": "DHL Express Freight",
+      "destinationClient": "Nordic EV Gigafactory, Gothenburg",
+      "shippingStatus": "IN_TRANSIT",
+      "dispatchDate": "2026-10-15T11:00:00.000Z",
+      "productIds": ["DPP-EV-001"],
+      "notes": "Secured high-value shipment consignment"
+    }
+  ],
+  "defects": [],
+  "manufacturingEvents": [
+    {
+      "eventId": "EVT-001",
+      "eventType": "MATERIAL_INSPECTED",
+      "targetType": "MATERIAL_BATCH",
+      "targetId": "MB-RAW-001",
+      "timestamp": "2026-10-01T09:00:00.000Z",
+      "station": "LAB-01",
+      "operator": "QC Chemist",
+      "inspectionResult": "PASSED",
+      "status": "SUCCESS",
+      "remarks": "Purity confirmed 99.99%"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "universal-dpp-traceability",
+  "version": "1.0.0",
+  "description": "AI-Powered Universal Digital Product Passport for Smart Product Traceability (PS10)",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install",
+    "dev": "node startAll.js",
+    "setup": "npm --prefix server install && npm --prefix client install",
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "server": "npm --prefix server start",
+    "server:dev": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "test:full": "node server/scripts/testFullSystemAudit.js",
+    "test:api": "node server/scripts/testEndpoints.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "digital-product-passport",
+    "traceability",
+    "manufacturing",
+    "electric-motor",
+    "defect-impact",
+    "esg",
+    "cirpass"
+  ],
+  "author": "Antigravity Engineering",
+  "license": "ISC"
+}

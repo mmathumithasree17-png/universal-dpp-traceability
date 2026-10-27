@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Custom clean scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Clean, Crisp Modern Light Industrial Cards */
+.industrial-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  border-radius: 1rem;
+  color: #0f172a;
+}
+
+.industrial-card-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.industrial-card-hover:hover {
+  border-color: #0284c7;
+  box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.12), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+
+.glow-text-cyan {
+  color: #0284c7;
+}
+
+.glow-text-gold {
+  color: #d97706;
+}
+
+/* Light Theme High-Contrast Typography & Surface Refinements */
+.industrial-card h1,
+.industrial-card h2,
+.industrial-card h3:not(button *),
+.industrial-card h4,
+.industrial-card .text-white:not(button *) {
+  color: #0f172a;
+}
+
+.industrial-card .text-slate-300:not(button *) {
+  color: #334155;
+}
+
+.industrial-card .text-slate-400:not(button *) {
+  color: #64748b;
+}
+
+.industrial-card .bg-navy-950,
+.industrial-card .bg-navy-950\/70,
+.industrial-card .bg-navy-950\/60,
+.industrial-card .bg-navy-950\/80,
+.industrial-card .bg-navy-900,
+.industrial-card .bg-navy-850 {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.industrial-card .border-navy-800,
+.industrial-card .border-navy-800\/80,
+.industrial-card .border-navy-800\/60,
+.industrial-card .border-navy-700,
+.industrial-card .border-navy-700\/80 {
+  border-color: #e2e8f0;
+}
+
+.industrial-card table thead {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.industrial-card table tbody tr {
+  border-color: #f1f5f9;
+}
+
+.industrial-card table tbody tr:hover {
+  background-color: #f0f9ff !important;
+}
+
+.industrial-card table td {
+  border-color: #f1f5f9;
+  color: #1e293b;
+}
+
+/* Crisp Modern Light Inputs across all forms */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #0284c7 !important;
+  outline: 2px solid rgba(2, 132, 199, 0.2) !important;
+}
+
+/* Light Mode Alert & Status Panel Enhancements */
+.bg-cyan-500\/10 {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0369a1 !important;
+}
+
+.bg-rose-950\/40,
+.bg-rose-950\/20,
+.bg-rose-950\/60 {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+
+.bg-emerald-950\/30,
+.bg-emerald-950\/20 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+.bg-gold-950\/40,
+.bg-amber-950\/20 {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #b45309 !important;
+}
+
+/* Print / PDF Export Optimization */
+@media print {
+  aside,
+  header,
+  footer,
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .industrial-card {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    backdrop-filter: none !important;
+  }
+
+  .text-white {
+    color: #000000 !important;
+  }
+
+  .text-slate-300,
+  .text-slate-400 {
+    color: #444444 !important;
+  }
+
+  .bg-navy-950,
+  .bg-navy-900,
+  .bg-navy-850 {
+    background-color: #f8f9fa !important;
+    border-color: #e2e8f0 !important;
+  }
+}
