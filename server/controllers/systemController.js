@@ -23,7 +23,7 @@ async function getHealth(req, res) {
       database: {
         mode: dbState.mode,
         isConnected: dbState.isConnected,
-        uri: dbState.mode === 'mongodb' ? dbState.uri : 'Local Persistent Storage Engine',
+        uri: dbState.mode === 'mongodb' ? dbState.uri.replace(/:([^:@]+)@/, ':****@') : 'Local Persistent Storage Engine',
       }
     });
   } catch (err) {
