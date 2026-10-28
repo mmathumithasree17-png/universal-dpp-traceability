@@ -37,9 +37,7 @@ function getBaseUrl(req) {
   if (host && !host.includes('localhost') && !host.includes('127.0.0.1') && !host.startsWith('10.') && !host.startsWith('192.') && !host.startsWith('172.')) {
     return `${proto}://${host}`;
   }
-  const lanIp = getLanIp();
-  const port = process.env.PORT || 5001;
-  return `http://${lanIp}:${port}`;
+  return 'https://universal-dpp-traceability.onrender.com';
 }
 
 const DEFAULT_CHECKLIST_ITEMS = [
@@ -311,8 +309,8 @@ async function createShipment(req, res) {
           complianceCertificates: ['ISO 9001', 'EU ESPR 2024/1781', 'CE Mark'],
           status: 'SHIPPED',
           shipmentId: shipmentId,
-          passportUrl: `http://${lanIp}:${port}/dpp?id=${pId}`,
-          qrPayload: `http://${lanIp}:${port}/dpp?id=${pId}`
+          passportUrl: `${baseUrl}/dpp?id=${pId}`,
+          qrPayload: `${baseUrl}/traceability?id=${pId}&dir=backward`
         });
       }
     }

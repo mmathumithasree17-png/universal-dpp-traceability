@@ -250,7 +250,7 @@ async function getNetworkInfo(req, res) {
     }
 
     const port = process.env.PORT || 5001;
-    const publicUrl = process.env.PUBLIC_URL || null;
+    const publicUrl = process.env.PUBLIC_URL || 'https://universal-dpp-traceability.onrender.com';
     const lanUrl = detectedLanIp ? `http://${detectedLanIp}:${port}/dashboard` : null;
     const localUrl = `http://localhost:${port}/dashboard`;
 

@@ -11,3 +11,5 @@ services:
         value: production
       - key: MONGODB_URI
         value: mongodb+srv://mmathumithasree17_db_user:73I39joQtTG94JFC@cluster0.di2rczb.mongodb.net/dpp_traceability?retryWrites=true&w=majority
+      - key: PUBLIC_URL
+        value: https://universal-dpp-traceability.onrender.com

@@ -18,12 +18,14 @@ import {
 import QRCode from 'qrcode';
 import { api } from '../../api/client';
 
+const PRODUCTION_URL = 'https://universal-dpp-traceability.onrender.com';
+
 export default function ScanWebsiteModal({ isOpen, onClose }) {
   const [networkInfo, setNetworkInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedPage, setSelectedPage] = useState('shipment'); // 'shipment' | 'dashboard' | 'dpp'
-  const [selectedMode, setSelectedMode] = useState('lan'); // 'lan' | 'public' | 'local'
-  const [customPublicUrl, setCustomPublicUrl] = useState('');
+  const [selectedPage, setSelectedPage] = useState('traceability'); // 'traceability' | 'dpp' | 'shipment' | 'dashboard'
+  const [selectedMode, setSelectedMode] = useState('public'); // Default to public HTTPS cloud URL for instant phone loading
+  const [customPublicUrl, setCustomPublicUrl] = useState(PRODUCTION_URL);
   const [qrPngDataUrl, setQrPngDataUrl] = useState('');
   const [qrSvgString, setQrSvgString] = useState('');
   const [copied, setCopied] = useState(false);
@@ -44,22 +46,14 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
         } else if (res.success && res.publicUrl) {
           setCustomPublicUrl(res.publicUrl);
           setSelectedMode('public');
-        } else if (res.success && res.lanUrl) {
-          setSelectedMode('lan');
         } else {
-          setSelectedMode('local');
+          setCustomPublicUrl(PRODUCTION_URL);
+          setSelectedMode('public');
         }
       } catch (err) {
         console.warn('Network info fetch fallback:', err);
-        // Fallback to window.location
-        const port = window.location.port || '5001';
-        const hostname = window.location.hostname;
-        setNetworkInfo({
-          lanIp: hostname !== 'localhost' ? hostname : '10.1.0.173',
-          lanUrl: `http://${hostname !== 'localhost' ? hostname : '10.1.0.173'}:${port}/dashboard`,
-          localUrl: `http://localhost:${port}/dashboard`,
-          port,
-        });
+        setCustomPublicUrl(PRODUCTION_URL);
+        setSelectedMode('public');
       } finally {
         setLoading(false);
       }
@@ -69,9 +63,9 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
 
   // Determine current active URL to encode into QR based on mode and page
   const getPagePath = () => {
-    if (selectedPage === 'traceability') return '/traceability';
+    if (selectedPage === 'traceability') return '/traceability?id=DPP-EV500-2026-003&dir=backward';
     if (selectedPage === 'shipment') return '/shipment-verify/latest';
-    if (selectedPage === 'dpp') return '/dpp';
+    if (selectedPage === 'dpp') return '/dpp?id=DPP-EV500-2026-003';
     return '/dashboard';
   };
 
@@ -81,17 +75,8 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
     if (isPublicHost) {
       return `${window.location.origin}${path}`;
     }
-    const port = networkInfo?.port || window.location.port || '5001';
-    if (selectedMode === 'public') {
-      const base = customPublicUrl.trim() || window.location.origin;
-      return base.replace(/\/+$/, '') + path;
-    }
-    if (selectedMode === 'local') {
-      return `http://localhost:${port}${path}`;
-    }
-    // Default to LAN IP for mobile phone scanning
-    const ip = networkInfo?.lanIp || '10.1.0.173';
-    return `http://${ip}:${port}${path}`;
+    const base = customPublicUrl.trim() || PRODUCTION_URL;
+    return base.replace(/\/+$/, '') + path;
   })();
 
   // Generate both PNG and SVG QR codes whenever destination URL changes
@@ -206,7 +191,7 @@ export default function ScanWebsiteModal({ isOpen, onClose }) {
                   <span>Product Traceability</span>
                 </div>
                 <div className="text-[10px] text-slate-500 mt-1 font-mono">
-                  /traceability
+                  Lineage & Provenance Tree
                 </div>
               </button>
 

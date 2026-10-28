@@ -66,8 +66,21 @@ export default function TraceabilityPage() {
   const [searchParams] = useSearchParams();
   const { refreshTrigger } = useOutletContext() || {};
 
-  const [direction, setDirection] = useState(searchParams.get('dir') || 'forward');
-  const [identifier, setIdentifier] = useState(searchParams.get('id') || 'MB-MVTEC-CABLE-01');
+  const detectNaturalDirection = (id, explicitDir) => {
+    if (explicitDir === 'forward' || explicitDir === 'backward') return explicitDir;
+    if (!id) return 'backward';
+    const clean = id.trim().toUpperCase();
+    if (clean.startsWith('DPP-') || clean.startsWith('SN-') || clean.startsWith('ASM-') || clean.startsWith('SHP-')) {
+      return 'backward';
+    }
+    return 'forward';
+  };
+
+  const initialId = searchParams.get('id') || 'DPP-EV500-2026-003';
+  const initialDir = detectNaturalDirection(initialId, searchParams.get('dir'));
+
+  const [direction, setDirection] = useState(initialDir);
+  const [identifier, setIdentifier] = useState(initialId);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -118,8 +131,18 @@ export default function TraceabilityPage() {
   };
 
   useEffect(() => {
-    handleTrace(identifier, direction);
-  }, [direction, refreshTrigger]);
+    const urlId = searchParams.get('id');
+    const urlDir = searchParams.get('dir');
+    if (urlId) {
+      const cleanId = urlId.trim();
+      const resolvedDir = detectNaturalDirection(cleanId, urlDir);
+      setIdentifier(cleanId);
+      setDirection(resolvedDir);
+      handleTrace(cleanId, resolvedDir);
+    } else {
+      handleTrace(identifier, direction);
+    }
+  }, [searchParams, refreshTrigger]);
 
   const handlePresetSelect = (preset) => {
     setDirection(preset.direction);

@@ -193,9 +193,10 @@ async function getProductByPassportId(req, res) {
     const reqHost = req.headers['x-forwarded-host'] || req.get('host');
     const reqProto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
     const isPublicHost = reqHost && !reqHost.includes('localhost') && !reqHost.includes('127.0.0.1') && !reqHost.startsWith('10.') && !reqHost.startsWith('192.') && !reqHost.startsWith('172.');
-    const baseUrl = process.env.PUBLIC_URL || (isPublicHost ? `${reqProto}://${reqHost}` : `http://${lanIp}:${port}`);
+    const baseUrl = process.env.PUBLIC_URL || (isPublicHost ? `${reqProto}://${reqHost}` : 'https://universal-dpp-traceability.onrender.com');
     const passportUrl = `${baseUrl}/dpp?id=${product.passportId}`;
-    const qrPayload = passportUrl;
+    const traceabilityUrl = `${baseUrl}/traceability?id=${product.passportId}&dir=backward`;
+    const qrPayload = traceabilityUrl;
     const verificationHash = crypto.createHash('sha256')
       .update(`${product.passportId}:${product.serialNumber}:${product.manufacturedDate}:${product.status}`)
       .digest('hex');
@@ -206,6 +207,7 @@ async function getProductByPassportId(req, res) {
         product: {
           ...product,
           passportUrl,
+          traceabilityUrl,
           qrPayload,
           verificationHash,
           complianceStandard: 'EU CIRPASS & Eco-Design ESPR 2024/1781',
@@ -263,11 +265,9 @@ async function createProduct(req, res) {
       return res.status(400).json({ success: false, message: 'A product with this passportId or serialNumber already exists.' });
     }
 
-    const lanIp = getLanIp();
-    const port = process.env.PORT || 5001;
-    const baseUrl = process.env.PUBLIC_URL || `http://${lanIp}:${port}`;
+    const baseUrl = process.env.PUBLIC_URL || 'https://universal-dpp-traceability.onrender.com';
     const reachablePassportUrl = `${baseUrl}/dpp?id=${passportId}`;
-    const qrPayload = reachablePassportUrl;
+    const qrPayload = `${baseUrl}/traceability?id=${passportId}&dir=backward`;
 
     const defaultComponents = [
       {

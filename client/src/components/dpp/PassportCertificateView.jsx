@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   QrCode,
@@ -20,11 +20,12 @@ import {
   Wrench,
   MapPin,
   Network,
+  Share2,
 } from 'lucide-react';
 import Badge from '../common/Badge';
 import QrCodeDisplay from './QrCodeDisplay';
 import PassportTimeline from './PassportTimeline';
-import { resolveReachableUrl } from '../../utils/urlHelper';
+import { resolveReachableUrl, resolveTraceabilityUrl } from '../../utils/urlHelper';
 
 export default function PassportCertificateView({ passportData, onSelectRelated }) {
   if (!passportData) return null;
@@ -47,8 +48,13 @@ export default function PassportCertificateView({ passportData, onSelectRelated 
   };
 
   const isQuarantined = product.status === 'QUARANTINED';
-  // Ensure QR code always encodes a reachable URL for phones on any network or public internet
-  const qrValue = resolveReachableUrl(product.passportUrl, `/dpp?id=${product.passportId}`);
+  const [qrTargetType, setQrTargetType] = useState('traceability'); // 'traceability' | 'passport'
+
+  // Ensure QR code always encodes a reachable public HTTPS URL
+  const qrValue =
+    qrTargetType === 'traceability'
+      ? resolveTraceabilityUrl(product.passportId, 'backward')
+      : resolveReachableUrl(product.passportUrl, `/dpp?id=${product.passportId}`);
 
   return (
     <div className="space-y-6 printable-passport">
@@ -96,6 +102,34 @@ export default function PassportCertificateView({ passportData, onSelectRelated 
 
           {/* QR Code and Actions */}
           <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-2.5 shrink-0">
+            {/* QR Target Switcher */}
+            <div className="w-full bg-slate-900/90 p-1 rounded-xl border border-slate-700 flex text-[11px] font-mono">
+              <button
+                type="button"
+                onClick={() => setQrTargetType('traceability')}
+                className={`flex-1 py-1 px-2 rounded-lg font-semibold transition-all text-center flex items-center justify-center space-x-1 ${
+                  qrTargetType === 'traceability'
+                    ? 'bg-cyan-600 text-white shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Network className="w-3 h-3" />
+                <span>Traceability</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setQrTargetType('passport')}
+                className={`flex-1 py-1 px-2 rounded-lg font-semibold transition-all text-center flex items-center justify-center space-x-1 ${
+                  qrTargetType === 'passport'
+                    ? 'bg-cyan-600 text-white shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <QrCode className="w-3 h-3" />
+                <span>Passport</span>
+              </button>
+            </div>
+
             <QrCodeDisplay
               value={qrValue}
               passportId={product.passportId}
@@ -108,7 +142,7 @@ export default function PassportCertificateView({ passportData, onSelectRelated 
               title="Inspect complete backward manufacturing genealogy and raw material provenance"
             >
               <Network className="w-4 h-4" />
-              <span>Trace Product Lineage</span>
+              <span>Open Traceability Pipeline</span>
             </Link>
 
             <button
@@ -118,6 +152,135 @@ export default function PassportCertificateView({ passportData, onSelectRelated 
               <Printer className="w-4 h-4 text-slate-500" />
               <span>Print / Export PDF</span>
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Embedded Complete Multi-Tier Traceability Lineage Overview */}
+      <div className="industrial-card p-5 md:p-6 rounded-2xl border border-cyan-500/30 bg-slate-900/60 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-700/80">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+              <Network className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-mono font-bold uppercase tracking-wider text-white">
+                Live End-to-End Product Traceability Lineage
+              </h2>
+              <p className="text-xs text-slate-400 font-sans">
+                Full 5-tier multi-stage supply chain provenance for serial unit <strong className="text-cyan-300 font-mono">{product.serialNumber}</strong>
+              </p>
+            </div>
+          </div>
+          <Link
+            to={`/traceability?id=${product.passportId}&dir=backward`}
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold transition-colors shrink-0"
+          >
+            <span>Interactive Graph Canvas</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {/* 5-Tier Pipeline Steps */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+          {/* Tier 1: Raw Materials */}
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Tier 1: Materials</span>
+              <Layers className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-xs font-mono font-bold text-amber-300 truncate">
+                {materialBatches[0]?.batchId || 'MB-MVTEC-CABLE-01'}
+              </p>
+              <p className="text-[11px] text-slate-300 line-clamp-2 mt-0.5">
+                {materialBatches[0]?.materialName || 'Class-H High-Temp Stator Wire'}
+              </p>
+            </div>
+            <div className="pt-1.5 border-t border-slate-700/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span>Lot Provenance</span>
+              <span className="text-emerald-400">Verified</span>
+            </div>
+          </div>
+
+          {/* Tier 2: Components */}
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Tier 2: Components</span>
+              <Box className="w-3.5 h-3.5 text-cyan-400" />
+            </div>
+            <div>
+              <p className="text-xs font-mono font-bold text-cyan-300 truncate">
+                {components[0]?.componentId || 'CMP-MVTEC-HARNESS-101'}
+              </p>
+              <p className="text-[11px] text-slate-300 line-clamp-2 mt-0.5">
+                {components[0]?.componentName || 'HV Stator Phase Lead Harness'}
+              </p>
+            </div>
+            <div className="pt-1.5 border-t border-slate-700/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span>{components.length} Linked</span>
+              <span className="text-cyan-300 font-bold">Passed</span>
+            </div>
+          </div>
+
+          {/* Tier 3: Subassembly */}
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Tier 3: Assembly</span>
+              <Cpu className="w-3.5 h-3.5 text-indigo-400" />
+            </div>
+            <div>
+              <p className="text-xs font-mono font-bold text-indigo-300 truncate">
+                {assembly?.assemblyId || 'ASM-MVTEC-POWERTRAIN-401'}
+              </p>
+              <p className="text-[11px] text-slate-300 line-clamp-2 mt-0.5">
+                {assembly?.assemblyName || '350kW Powertrain Assembly'}
+              </p>
+            </div>
+            <div className="pt-1.5 border-t border-slate-700/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span>{assembly?.assemblyLine || 'Bay 03'}</span>
+              <span className="text-indigo-300 font-bold">Inspected</span>
+            </div>
+          </div>
+
+          {/* Tier 4: Finished Product */}
+          <div className="p-3.5 rounded-xl bg-cyan-950/40 border border-cyan-500/40 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold">Tier 4: Finished Motor</span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-xs font-mono font-bold text-white truncate">
+                {product.passportId}
+              </p>
+              <p className="text-[11px] text-slate-300 line-clamp-2 mt-0.5">
+                {product.modelName}
+              </p>
+            </div>
+            <div className="pt-1.5 border-t border-cyan-500/20 flex items-center justify-between text-[10px] font-mono">
+              <span className="text-slate-400">Passport Status</span>
+              <span className="text-emerald-400 font-bold">{product.status}</span>
+            </div>
+          </div>
+
+          {/* Tier 5: Outbound Logistics */}
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Tier 5: Consignment</span>
+              <Truck className="w-3.5 h-3.5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-xs font-mono font-bold text-emerald-300 truncate">
+                {shipment?.shipmentId || 'SHP-071630'}
+              </p>
+              <p className="text-[11px] text-slate-300 line-clamp-2 mt-0.5">
+                {shipment?.destinationClient || 'BMW AG Munich Assembly'}
+              </p>
+            </div>
+            <div className="pt-1.5 border-t border-slate-700/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span>{shipment?.carrier || 'DHL Secure'}</span>
+              <span className="text-emerald-400 font-bold">{shipment?.shippingStatus || 'DELIVERED'}</span>
+            </div>
           </div>
         </div>
       </div>
